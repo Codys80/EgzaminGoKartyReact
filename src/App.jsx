@@ -15,61 +15,69 @@ function App() {
     {id: 9, typ: "6,5hp", silnik: "spalinowy", wymagania: "wzrost, wiek", numer: 7, jezdzi: "Tak", usterka: ""},
     {id: 10, typ: "1,5hp", silnik: "elektryczny", wymagania: "wzrost, wiek", numer: 2, jezdzi: "Nie", usterka: "Popsute akumulatory"},
   ]);
- const selectRef = useRef(null);
-  function handleInputChange(myRef, id){
-    setGokarty(prevGokarty =>
-    prevGokarty.map(gokart => {
-      if (gokart.id === id) {
-        return { ...gokart, usterka: myRef.current.value };
-      }
-      return gokart;
-    })
-  );
-  }
+
+  const selectRef = []
+  gokarty.forEach((gokart) => {
+    selectRef[gokart.id] = useRef(null)
+  })
+
+  // function handleInputChange(myRef, id){
+  //   setGokarty(prevGokarty =>
+  //   prevGokarty.map(gokart => {
+  //     if (gokart.id === id) {
+  //       return { ...gokart, usterka: null };
+  //     }
+  //     return gokart;
+  //   })
+  // );
+  // }
 
  function handleSelectChange(myRef, id){
-  console.log(id);
 
-  setGokarty(prevGokarty =>
+    setGokarty(prevGokarty =>
     prevGokarty.map(gokart => {
+        
       if (gokart.id === id) {
-        return { ...gokart, jezdzi: myRef.current.value };
+        return { ...gokart, jezdzi: myRef.current.value, usterka: null };
       }
       return gokart;
     })
   );
-
  }
 
   return (
     <div className='container bg-black'>
       <h1 className='txcolor-yellow'>Panel pracownikow - Lista gokartow</h1>
       <table>
-        <tr>
-          <th><strong> Numer: </strong></th>
-          <th><strong> Typ: </strong></th>
-          <th><strong> Silnik: </strong></th>
-          <th><strong> Wymagania: </strong></th>
-          <th><strong> Jezdzi: </strong></th>
-          <th><strong> Usterka: </strong></th>
-        </tr>
+        <thead>
+          <tr>
+            <th><strong> Numer: </strong></th>
+            <th><strong> Typ: </strong></th>
+            <th><strong> Silnik: </strong></th>
+            <th><strong> Wymagania: </strong></th>
+            <th><strong> Jezdzi: </strong></th>
+            <th><strong> Usterka: </strong></th>
+          </tr>
+        </thead>
+        <tbody>
           {gokarty.map((gokart) => (
           <tr key={gokart.id}>
-            <td> {gokart.numer},  </td>
-            <td> {gokart.typ},  </td>
-            <td> {gokart.silnik},  </td>
+            <td> {gokart.numer}  </td>
+            <td> {gokart.typ}  </td>
+            <td> {gokart.silnik}  </td>
             <td> {gokart.wymagania}</td>
             <td> 
-                <select onChange={() => (handleSelectChange(selectRef, gokart.id),  console.log(selectRef.current.value))} defaultValue={gokart.jezdzi} ref = {selectRef}>
-                  <option value = "Tak" ref = {selectRef} onSelect={() => selectRef.current.value = "Tak"}> Tak </option>
-                  <option value = "Nie" ref = {selectRef} onSelect={() => selectRef.current.value = "Nie"}> Nie </option>
+                <select ref = {selectRef[gokart.id]} onChange={() => (handleSelectChange(selectRef[gokart.id], gokart.id))} defaultValue={gokart.jezdzi} >
+                  <option value = "Tak"> Tak </option>
+                  <option value = "Nie"> Nie </option>
                 </select>
             </td>
             <td>
-              <input type='text' style={{display: gokart.jezdzi === "Nie" ? "block" : "none"}} defaultValue={gokart.usterka} onChange={() => handleInputChange(selectRef, gokart.id)}/>
+              {gokart.jezdzi === "Nie" && <input type='text' required defaultValue={gokart.usterka}  />}
             </td>
           </tr>
         ))}
+        </tbody>
       </table>
       <button className='btn btn-warning'>Kontakt do szefa</button>
     </div>
